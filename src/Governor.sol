@@ -6,19 +6,15 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@aave/contracts/interfaces/IPoolAddressesProvider.sol";
 import "@aave/contracts/interfaces/IPool.sol";
 
+/*
+09/06: TODO: Set up chainlink Keeper to update balance one a week with AAVE
+             Write foundry test to check if it works
+*/
+
 contract Governor is Ownable {
-    // Polygon Mainnet
-    // IERC20 public wmatic = IERC20(0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270);
-    // IERC20 public aWmatic = IERC20(0x6d80113e533a2C0fe82EaBD35f1875DcEA89Ea97);
-    // IPool public aavePool = IPool(0x794a61358D6845594F94dc1DB02A252b5b4814aD);
-    // Polygon Mumbai
-    IERC20 public wmatic = IERC20(0xb685400156cF3CBE8725958DeAA61436727A30c3);
-    IERC20 public aWmatic = IERC20(0x89a6AE840b3F8f489418933A220315eeA36d11fF);
-    IPoolAddressesProvider provider =
-        IPoolAddressesProvider(
-            address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)
-        );
-    IPool public aavePool = IPool(provider.getPool());
+    IERC20 public wmatic = IERC20(0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270);
+    IERC20 public aWmatic = IERC20(0x6d80113e533a2C0fe82EaBD35f1875DcEA89Ea97);
+    IPool public aavePool = IPool(0x794a61358D6845594F94dc1DB02A252b5b4814aD);
     SBT public sbt;
 
     /* -------------------------------------------------------------------------- */
@@ -26,7 +22,7 @@ contract Governor is Ownable {
     /* -------------------------------------------------------------------------- */
 
     //Amount of Wmatic needed to stake a course
-    uint256 immutable stakeAmount = 0.0001 ether;
+    uint256 immutable stakeAmount = 1;
 
     uint256 public totalStaked; //in WMatic
     uint256 public interval; //in seconds, for Chainlink keeper
@@ -144,10 +140,6 @@ contract Governor is Ownable {
     function redeemAWmatic(uint256 _amount) external onlyOwner {
         _aaveWithdraw(_amount);
     }
-
-    //TODO: Function to distribute some staking gains to top students/educators
-    // function distributeToTopStudents(address[5] _users) external onlyOwner {
-    // }
 
     function setNewMinReserve(uint256 _newReserveAmount) external onlyOwner {
         minReserve = _newReserveAmount;

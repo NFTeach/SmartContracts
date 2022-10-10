@@ -130,12 +130,12 @@ contract TeacherDepositTest is Test {
         assert(governor.courseStaked(0) == true);
         assert(wmatic.balanceOf(address(governor)) == 1);
 
-        sbt.createSBT(1, "myStringTest");
-        sbt.createSBT(1, "myStringTest");
-        sbt.createSBT(1, "myStringTest");
-        sbt.createSBT(1, "myStringTest");
-        sbt.createSBT(1, "myStringTest");
-        sbt.createSBT(1, "myStringTest");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDNx");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDN");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDNxX");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDNxsa");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDNxasdaw");
+        sbt.createSBT(1, "BJYq5rIpyBWkXErKfsXAgDNxadwad");
 
         assert(wmatic.balanceOf(address(governor)) == 7);
         assert(aWmatic.balanceOf(address(governor)) == 0);
