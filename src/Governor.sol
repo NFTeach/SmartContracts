@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.14;
 
 import "./SBT.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -48,6 +48,9 @@ contract Governor is Ownable {
      */
     event aaveWithdraw(uint256 amount);
 
+    error AllowanceError(string);
+    error NotEnoughWMatic();
+
     /* -------------------------------------------------------------------------- */
     /*                                 CONSTRUCTOR                                */
     /* -------------------------------------------------------------------------- */
@@ -76,14 +79,9 @@ contract Governor is Ownable {
         external
         onlySBT
     {
-        require(
-            wmatic.allowance(_educator, address(this)) >= stakeAmount,
-            "Make sure you approve the Wmatic contract"
-        );
-        require(
-            wmatic.balanceOf(_educator) >= stakeAmount,
-            "Not enough WMatic"
-        );
+        if (wmatic.allowance(_educator, address(this)) < stakeAmount)
+            revert AllowanceError("Need to approve the Wmatic contract");
+        if (wmatic.balanceOf(_educator) < stakeAmount) revert NotEnoughWMatic();
 
         wmatic.transferFrom(_educator, address(this), stakeAmount);
 
@@ -96,7 +94,7 @@ contract Governor is Ownable {
         external
         onlySBT
     {
-        require(wmatic.balanceOf(address(this)) >= 1, "Not enough Wmatic");
+        if (wmatic.balanceOf(address(this)) < 1) revert NotEnoughWMatic();
 
         courseStaked[_courseId] = false;
         teacherBalance[_educator] = teacherBalance[_educator] - stakeAmount;
@@ -169,7 +167,3 @@ contract Governor is Ownable {
         }
     }
 }
-
-// receive() external payable {}
-// fallback() external payable {}
-// }
