@@ -129,11 +129,14 @@ contract SBT is ERC1155, Ownable {
     // Mapping from tokenId to Test struct
     mapping(uint256 => Test) public tests;
     // Mapping from address to the balance owed to each educator
+    //@audit - payout can go into the educator struct or in test struct?
     mapping(address => uint256) public payout;
     // Mapping from address to Educator struct
     mapping(address => Educator) public educators;
     // Mapping from address to Student struct
     mapping(address => Student) students;
+    //Mapping from student address to uint of testId to bytes32 of ipfs hash
+    mapping(address => mapping(uint256 => bytes32)) public certificates;
 
     /* -------------------------------------------------------------------------- */
     /*                                 MODIFIERS                                  */
@@ -243,7 +246,11 @@ contract SBT is ERC1155, Ownable {
     /**
      * @dev Called whenever a student mints a token after completion of the corresponding test
      */
-    function mintSBT(uint256 _tokenId) public payable onlyStudent {
+    function mintSBT(uint256 _tokenId, bytes32 certificate)
+        public
+        payable
+        onlyStudent
+    {
         // Student must have permission to mint the token
         require(
             students[msg.sender].allowedMint[_tokenId],
@@ -265,6 +272,8 @@ contract SBT is ERC1155, Ownable {
         students[msg.sender].allowedMint[_tokenId] = false;
         students[msg.sender].sbtMinted += 1;
         educators[tests[_tokenId].educator].nbStudentsMinted += 1;
+
+        certificates[msg.sender][_tokenId] = certificate;
 
         _mint(msg.sender, _tokenId, 1, "");
 
