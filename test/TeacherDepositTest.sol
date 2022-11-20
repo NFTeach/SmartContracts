@@ -106,6 +106,54 @@ contract TeacherDepositTest is Test {
     //     // assert(wmatic.balanceOf(address(governor)) == 8);
     // }
 
+    function testSBTCreation() public {
+        vm.createSelectFork(vm.envString("ETH_RPC_URL"), 32821975);
+
+        sbt = new SBT("myURLAddress");
+        governor = new Governor(30, address(sbt));
+        address wMaticOwner = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+
+        assert(sbt.isEducator(wMaticOwner) == false);
+        sbt.addEducator(wMaticOwner);
+        assert(sbt.isEducator(wMaticOwner) == true);
+
+        sbt.setGovernor(address(governor));
+
+        //Create new course fron newly created educator
+        vm.startPrank(wMaticOwner);
+
+        wmatic.approve(address(governor), 10000);
+
+        assert(sbt.getTestEducator(0) == address(0));
+        assert(governor.courseStaked(0) == false);
+        assert(wmatic.balanceOf(address(governor)) == 0);
+        sbt.createSBT(0, "myStringTest");
+        assert(sbt.getTestEducator(0) == wMaticOwner);
+        assert(governor.courseStaked(0) == true);
+        assert(wmatic.balanceOf(address(governor)) == 1);
+
+        vm.stopPrank();
+
+        address newStudent = address(0xdeadbeef);
+
+        assert(sbt.isStudent(newStudent) == false);
+        sbt.addStudent(newStudent);
+        assert(sbt.isStudent(newStudent) == true);
+
+        assert(sbt.isAllowedMint(newStudent, 0) == false);
+        sbt.validateStudentTest(newStudent, 0);
+        assert(sbt.isAllowedMint(newStudent, 0) == true);
+
+        vm.startPrank(newStudent);
+        sbt.mintSBT(0, "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE");
+
+        string
+            memory myString = "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE";
+        assertEq(sbt.getCertificate(msg.sender, 0), myString);
+
+        vm.stopPrank();
+    }
+
     function testAccessControlTeacher() public {
         vm.createSelectFork(vm.envString("ETH_RPC_URL"), 32821975);
 

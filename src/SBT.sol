@@ -136,7 +136,7 @@ contract SBT is ERC1155, Ownable {
     // Mapping from address to Student struct
     mapping(address => Student) students;
     //Mapping from student address to uint of testId to bytes32 of ipfs hash
-    mapping(address => mapping(uint256 => bytes32)) public certificates;
+    mapping(address => mapping(uint256 => string)) public certificates;
 
     /* -------------------------------------------------------------------------- */
     /*                                 MODIFIERS                                  */
@@ -246,7 +246,7 @@ contract SBT is ERC1155, Ownable {
     /**
      * @dev Called whenever a student mints a token after completion of the corresponding test
      */
-    function mintSBT(uint256 _tokenId, bytes32 certificate)
+    function mintSBT(uint256 _tokenId, string memory certificate)
         public
         payable
         onlyStudent
@@ -380,6 +380,14 @@ contract SBT is ERC1155, Ownable {
         returns (uint256)
     {
         return (educators[_educator].lifetimePayout);
+    }
+
+    function getCertificate(address student, uint256 testId)
+        public
+        view
+        returns (string memory)
+    {
+        return (certificates[student][testId]);
     }
 }
 
