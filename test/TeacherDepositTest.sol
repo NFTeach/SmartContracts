@@ -145,11 +145,14 @@ contract TeacherDepositTest is Test {
         assert(sbt.isAllowedMint(newStudent, 0) == true);
 
         vm.startPrank(newStudent);
-        sbt.mintSBT(0, "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE");
+        sbt.mintSBT(
+            0,
+            "https://ipfs.moralis.io:2053/ipfs/QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE"
+        );
 
         assertEq(
             sbt.getCertificate(newStudent, 0),
-            "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE"
+            "https://ipfs.moralis.io:2053/ipfs/QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE"
         );
 
         vm.stopPrank();
