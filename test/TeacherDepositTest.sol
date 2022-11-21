@@ -147,9 +147,10 @@ contract TeacherDepositTest is Test {
         vm.startPrank(newStudent);
         sbt.mintSBT(0, "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE");
 
-        string
-            memory myString = "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE";
-        assertEq(sbt.getCertificate(msg.sender, 0), myString);
+        assertEq(
+            sbt.getCertificate(newStudent, 0),
+            "QmT2GdiwZGq4u5uDjWKvZyviJVG27LduF6aj7JD3v7kVsE"
+        );
 
         vm.stopPrank();
     }
