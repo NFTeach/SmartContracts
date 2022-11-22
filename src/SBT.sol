@@ -54,7 +54,7 @@ contract SBT is ERC1155, Ownable {
      * @param tokenId Id of the test and corresponding token
      * @param student address of the student which completed the test
      */
-    event MintSBT(uint256 tokenId, address student);
+    event MintSBT(uint256 tokenId, address student, string courseObjectId);
 
     /**
      * @notice emitted when an educator withdraws their payoff
@@ -246,7 +246,7 @@ contract SBT is ERC1155, Ownable {
     /**
      * @dev Called whenever a student mints a token after completion of the corresponding test
      */
-    function mintSBT(uint256 _tokenId, string memory certificate)
+    function mintSBT(uint256 _tokenId, string calldata certificate, string calldata _courseObjectId)
         public
         payable
         onlyStudent
@@ -277,7 +277,7 @@ contract SBT is ERC1155, Ownable {
 
         _mint(msg.sender, _tokenId, 1, "");
 
-        emit MintSBT(_tokenId, msg.sender);
+        emit MintSBT(_tokenId, msg.sender, _courseObjectId);
     }
 
     /**
